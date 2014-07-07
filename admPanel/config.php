@@ -1,7 +1,7 @@
 <?php
 //diretório do sistema
 define("BASEPATH", dirname(__FILE__)."/");
-define("BASEURL", "http://localhost:8090/administrationPanel/");
+define("BASEURL", "http://localhost:8090/admPanel/");
 define("ADMURL", BASEURL."painel.php");
 define("CLASSESPATH", "classes/");
 define("MODULOSPATH", "modulos/");

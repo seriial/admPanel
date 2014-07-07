@@ -17,6 +17,11 @@
                 <li><a href="?m=usuarios&t=listar">Exibir</a></li>
             </ul>
         </li>
+        <?
+        $sessao = new sessao();
+        $meuid = $sessao->getVar('iduser');        
+        ?>        
+        <li><a href="?m=usuarios&t=senha&id=<? echo $meuid ?>">Mudar Senha</a></li>
         <li><a href="?logoff=true">Sair</a></li>
     </ul>
 </div><!-- sidebar -->
