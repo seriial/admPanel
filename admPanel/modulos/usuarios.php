@@ -6,11 +6,11 @@
     switch ($tela) {
     case 'login': 
         $sessao = new sessao();
-        if($sessao->getNvars() > 0 || $sessao->getVar('logado') == TRUE || $sessao->getVar('ip') == $_SERVER['REMOTE_ADDR'] ) redireciona('painel.php');
+        if($sessao->getNvars() > 0 && $sessao->getVar('logado') == TRUE && $sessao->getVar('ip') == $_SERVER['REMOTE_ADDR'] ) redireciona('painel.php');
         if(isset($_POST['logar'])):
             $user = new usuarios();
-            $user->setValor('login', $_POST['usuario']);
-            $user->setValor('senha', $_POST['senha']);
+            $user->setValor('login', antiInject($_POST['usuario']));
+            $user->setValor('senha', antiInject($_POST['senha']));
             if($user->doLogin($user)):
                 redireciona('painel.php');
             else:
@@ -35,7 +35,7 @@
                     <ul>
                         <li>
                             <label for="usuario">Usuário:</label>
-                            <input type="text" size="35" name="usuario" value="<? echo $_POST['usuario'];?>"/>
+                            <input type="text" size="35" name="usuario" autofocus="autofocus" value="<? echo $_POST['usuario'];?>"/>
                         </li>
                         <li>
                             <label for="senha">Senha:</label>
@@ -110,7 +110,7 @@
                 <legend>Informe os dados para cadastro</legend>
                 <ul>
                     <li><label for="nome">Nome:</label>
-                    <input type="text" size="50" name="nome" value="<? echo $_POST['nome']?>"/></li>
+                    <input type="text" size="50" name="nome" autofocus="autofocus" value="<? echo $_POST['nome']?>"/></li>
                     <li><label for="email">Email:</label>
                     <input type="text" size="50" name="email" value="<? echo $_POST['email']?>"/></li>
                     <li><label for="login">Login:</label>
@@ -182,12 +182,19 @@
             if(isset($_GET['id'])):
                 $id = $_GET['id'];  
                 if(isset($_POST['editar'])):
-                    $user = new usuarios(array(
-                        'nome' => $_POST['nome'],
-                        'email' => $_POST['email'],
-                        'ativo' => ($_POST['ativo'] == 'on') ? 's' : 'n',
-                        'administrador' => ($_POST['adm'] == 'on') ? 's' : 'n',
-                    ));
+                    if(isAdmin() == TRUE):
+                        $user = new usuarios(array(
+                            'nome' => $_POST['nome'],
+                            'email' => $_POST['email'],
+                            'ativo' => ($_POST['ativo'] == 'on') ? 's' : 'n',
+                            'administrador' => ($_POST['adm'] == 'on') ? 's' : 'n',
+                        ));
+                    else:
+                        $user = new usuarios(array(
+                            'nome' => $_POST['nome'],
+                            'email' => $_POST['email'],
+                        ));                                           
+                    endif;
                     $user->valorpk = $id;
                     $user->extras_select = "WHERE id=$id";
                     $user->selecionaTudo($user);
@@ -231,7 +238,7 @@
                     <legend>Informe os dados para alteração</legend>
                     <ul>
                         <li><label for="nome">Nome:</label>
-                        <input type="text" size="50" name="nome" value="<? if($resbd) echo $resbd->nome ?>"/></li>
+                        <input type="text" size="50" name="nome" autofocus="autofocus" value="<? if($resbd) echo $resbd->nome ?>"/></li>
                         <li><label for="email">Email:</label>
                         <input type="text" size="50" name="email" value="<? if($resbd) echo $resbd->email ?>"/></li>
                         <li><label for="login">Login:</label>
@@ -297,7 +304,7 @@
                         <li><label for="login">Login:</label>
                         <input type="text" size="35" name="login" disabled="disabled" value="<? if($resbd) echo $resbd->login ?>"/></li>
                         <li><label for="senha">Senha:</label>
-                        <input type="password" size="25" name="senha" id="senha" value="<? echo $_POST['senha']?>"/></li>
+                        <input type="password" size="25" name="senha" autofocus="autofocus" id="senha" value="<? echo $_POST['senha']?>"/></li>
                         <li><label for="senhaconf">Repita a senha:</label>
                         <input type="password" size="25" name="senhaconf" value="<? echo $_POST['senhaconf']?>"/></li>                        
                         <li class="center"><input type="button" onclick="location.href='?m=usuarios&t=listar'" value="Cancelar"/><input type="submit" name="mudasenha" value="Salvar Alterações"></li>                                                
